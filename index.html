@@ -1,1004 +1,566 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html dir="rtl" lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Todo Timer App</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script defer src="https://unpkg.com/feather-icons"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .calendar-day { width: 30px; height: 30px; margin: 2px; }
-    .calendar-day:hover { transform: scale(1.1); }
-    
-    /* Light mode styles */
-    html:not(.dark) body {
-      background-color: #f0f4f8;
-      color: #1a202c;
-    }
-    
-    html:not(.dark) .bg-gray-900 {
-      background-color: #ffffff;
-    }
-    
-    html:not(.dark) .bg-gray-800 {
-      background-color: #edf2f7;
-    }
-    
-    html:not(.dark) .bg-gray-700 {
-      background-color: #e2e8f0;
-    }
-    
-    /* Keep button colors in light mode */
-    html:not(.dark) .bg-blue-600,
-    html:not(.dark) .bg-green-600,
-    html:not(.dark) .bg-red-600,
-    html:not(.dark) .bg-teal-600 {
-      color: white;
-    }
-    
-    /* Centralization styles */
-    .app-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    
-    .text-center-all * {
-      text-align: center;
-    }
-    
-    .flex-center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .grid-center {
-      display: grid;
-      place-items: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مواقيت الصلاة - كفر شكر - مايو 2025</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #e2e8f0;
+            --heading-color: #38bdf8;
+            --accent-color: #0ea5e9;
+            --highlight-color: #f472b6;
+            --border-color: #334155;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --gradient-start: #0f172a;
+            --gradient-end: #1e293b;
+            --prayer-card-bg: #1e293b;
+            --next-prayer-bg: rgba(14, 165, 233, 0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            direction: rtl;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+        
+        h1, h2 {
+            color: var(--heading-color);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            background: linear-gradient(to left, var(--heading-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .prayer-card {
+            background-color: var(--prayer-card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .prayer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.4);
+        }
+        
+        .prayer-name {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+        
+        .prayer-time {
+            font-size: 24px;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .countdown {
+            font-size: 40px;
+            font-weight: bold;
+            color: var(--highlight-color);
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        .date-display {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 20px;
+            color: var(--text-color);
+            background-color: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+        
+        .date-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .next-prayer {
+            background-color: var(--next-prayer-bg);
+            border: 2px solid var(--accent-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .next-prayer::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--accent-color), var(--highlight-color));
+        }
+        
+        .prayer-info {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        
+        .prayer-info-item {
+            text-align: center;
+        }
+        
+        .prayer-info-label {
+            font-size: 14px;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        .prayer-info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .day-selector {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .day-selector select {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-family: 'Tajawal', sans-serif;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 200px;
+            text-align: center;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23e2e8f0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            padding-left: 40px;
+        }
+        
+        .day-selector select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
+        }
+        
+        .loading {
+            text-align: center;
+            font-size: 20px;
+            margin: 50px 0;
+            color: var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--accent-color);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .prayer-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .prayer-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+        
+        .countdown-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .next-prayer-label {
+            background-color: var(--accent-color);
+            color: var(--card-bg);
+            font-size: 12px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .prayer-cards-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .countdown {
+                font-size: 32px;
+            }
+        }
+    </style>
 </head>
-<body class="bg-black text-white min-h-screen flex flex-col items-center py-8">
-  <div class="w-full max-w-4xl p-6 space-y-8 bg-gray-900 rounded-2xl shadow-lg app-container">
-
-    <!-- Header -->
-    <header class="flex justify-center items-center text-center">
-      <div class="flex items-center gap-2 text-3xl font-semibold">
-        <i data-feather="clock"></i>
-        <span id="current-time">00:00:00</span>
-        <button id="dark-mode-toggle" class="ml-4 p-2 bg-gray-700 hover:bg-gray-600 text-yellow-300 rounded-full">
-          <i data-feather="sun"></i>
-        </button>
-      </div>
-    </header>
-
-    <!-- Summary -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="p-4 bg-gray-800 rounded-lg text-center">
-        <h2 class="text-lg font-bold flex items-center justify-center gap-2 mb-2"><i data-feather="clock"></i> Remaining Today</h2>
-        <p id="remaining-today" class="text-2xl font-mono">00:00:00</p>
+<body>
+    <div class="container">
+        <h1>مواقيت الصلاة - كفر شكر</h1>
+        <h2>شهر مايو 2025</h2>
         
-        <!-- Sleep Time Remaining Section -->
-        <div class="mt-3 pt-3 border-t border-gray-700">
-          <h3 class="text-sm font-bold flex items-center justify-center gap-2 mb-1">
-            <i data-feather="moon"></i> Until Sleep
-          </h3>
-          <div class="flex items-center justify-center gap-2 mb-2">
-            <input type="time" id="sleep-time-input" class="p-1 rounded bg-gray-700 text-white text-sm" value="23:00">
-          </div>
-          <p id="sleep-time-remaining" class="text-xl font-mono">00:00:00</p>
+        <div id="loading-message" class="loading">
+            <div class="loading-spinner"></div>
+            جاري تحميل مواقيت الصلاة...
         </div>
-      </div>
-      <div class="p-4 bg-gray-800 rounded-lg text-center">
-        <h2 class="text-lg font-bold flex items-center justify-center gap-2 mb-2"><i data-feather="calendar"></i> Deadline</h2>
-        <input id="deadline-input" type="datetime-local" class="w-full p-2 rounded bg-gray-700 text-white">
-        <div class="flex items-center justify-center gap-2 mt-2">
-          <input id="sleep-toggle" type="checkbox" class="h-5 w-5 text-blue-600">
-          <label for="sleep-toggle" class="text-sm">Exclude 8h sleep/day</label>
-        </div>
-        <div class="flex items-center justify-center gap-2 mt-2">
-          <input id="slept-today-toggle" type="checkbox" class="h-5 w-5 text-blue-600">
-          <label for="slept-today-toggle" class="text-sm">Add 8 hours I slept already</label>
-        </div>
-        <p id="deadline-remaining" class="mt-2 text-sm">No deadline set</p>
-      </div>
-      <div class="p-4 bg-gray-800 rounded-lg text-center">
-        <h2 class="text-lg font-bold mb-2">Hours Achieved</h2>
-        <p id="hours-achieved" class="text-2xl font-mono">0.00</p>
-        <p id="percentage-achieved" class="text-xl font-mono mt-2 transition-all duration-500">0%</p>
         
-        <!-- Habit Calendar Toggle -->
-        <button id="toggle-calendar" class="mt-2 text-sm text-blue-400 hover:underline">Show Calendar</button>
-      </div>
-    </section>
-    
-    <!-- Habit Calendar Section -->
-    <section id="habit-calendar-section" class="p-4 bg-gray-800 rounded-lg hidden text-center">
-      <h2 class="text-xl font-bold flex items-center justify-center gap-2 mb-4">
-        <i data-feather="calendar"></i> Habit Calendar
-      </h2>
-      <div class="flex justify-between items-center mb-4">
-        <button id="prev-month" class="p-2 bg-gray-700 rounded"><i data-feather="chevron-left"></i></button>
-        <h3 id="calendar-month" class="text-lg font-semibold">January 2023</h3>
-        <button id="next-month" class="p-2 bg-gray-700 rounded"><i data-feather="chevron-right"></i></button>
-      </div>
-      <div class="flex justify-around mb-2 text-xs text-gray-400">
-        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
-      </div>
-      <div id="calendar-days" class="flex flex-wrap justify-center"></div>
-      <div class="flex justify-between mt-4 text-sm">
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 bg-red-500 rounded"></div>
-          <span>0-25%</span>
+        <div id="prayer-content" style="display: none;">
+            <div class="date-container">
+                <div class="date-display" id="current-date">جاري تحميل التاريخ...</div>
+            </div>
+            
+            <div class="day-selector">
+                <select id="day-select"></select>
+            </div>
+            
+            <div id="next-prayer-container" class="prayer-card next-prayer">
+                <span class="next-prayer-label">الصلاة القادمة</span>
+                <div class="prayer-icon">
+                    <i class="fas fa-mosque"></i>
+                </div>
+                <div class="prayer-name" id="next-prayer-name">جاري تحميل...</div>
+                <div class="prayer-time" id="next-prayer-time"></div>
+                <div class="countdown" id="countdown-timer">--:--:--</div>
+                <div class="countdown-label">متبقي حتى الصلاة القادمة</div>
+            </div>
+            
+            <div id="prayer-cards-container" class="prayer-cards-grid"></div>
         </div>
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 bg-yellow-500 rounded"></div>
-          <span>25-50%</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 bg-green-500 rounded"></div>
-          <span>50-75%</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-4 h-4 bg-blue-500 rounded"></div>
-          <span>75-100%</span>
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- Add Task -->
-    <section class="p-4 bg-gray-800 rounded-lg">
-      <div class="flex flex-col md:flex-row gap-4 justify-center">
-        <input id="new-task-input" type="text" placeholder="New task..." class="flex-1 p-2 rounded bg-gray-700">
-        <select id="timer-select" class="p-2 rounded bg-gray-700">
-          <option value="15">15 min</option>
-          <option value="30">30 min</option>
-          <option value="45">45 min</option>
-          <option value="60">1 hr</option>
-          <option value="90">1 hr 30 min</option>
-        </select>
-        <button id="add-task-button" class="p-2 bg-blue-600 text-white rounded">Add Task</button>
-      </div>
-      <div id="preset-task-container" class="flex flex-wrap gap-2 mt-4 justify-center"></div>
-    </section>
+    <script>
+        // أسماء الصلوات
+        const prayerNames = {
+            fajr: "الفجر",
+            sunrise: "الشروق",
+            dhuhr: "الظهر",
+            asr: "العصر",
+            maghrib: "المغرب",
+            isha: "العشاء"
+        };
 
-    <!-- Tasks -->
-    <section class="p-4 bg-gray-800 rounded-lg">
-      <h2 class="text-xl font-bold flex items-center justify-center gap-2 mb-4"><i data-feather="list"></i> Tasks</h2>
-      <div id="tasks-container" class="space-y-4 text-center">
-        <p class="text-center italic">No tasks yet. Add one above!</p>
-      </div>
-    </section>
-
-    <!-- Break -->
-    <section class="p-4 bg-gray-800 rounded-lg text-center">
-      <h2 class="text-xl font-bold mb-4 text-center">Take a Break</h2>
-      <div id="break-container" class="flex flex-wrap gap-2 justify-center"></div>
-    </section>
-  </div>
-
-<script>
-// Notification permission request
-if (Notification.permission !== 'granted') Notification.requestPermission();
-
-const state = { 
-  tasks: [], 
-  hoursAchieved: 0, 
-  deadline: null, 
-  breakActive: false, 
-  breakTimeLeft: 0,
-  dailyProgress: {} // New state for tracking daily progress
-};
-
-const elems = {
-  time: document.getElementById('current-time'),
-  remainingToday: document.getElementById('remaining-today'),
-  deadlineInput: document.getElementById('deadline-input'),
-  sleepToggle: document.getElementById('sleep-toggle'),
-  sleptToggle: document.getElementById('slept-today-toggle'),
-  deadlineRemaining: document.getElementById('deadline-remaining'),
-  hoursAchieved: document.getElementById('hours-achieved'),
-  percentageAchieved: document.getElementById('percentage-achieved'),
-  newTaskInput: document.getElementById('new-task-input'),
-  timerSelect: document.getElementById('timer-select'),
-  addTaskButton: document.getElementById('add-task-button'),
-  tasksContainer: document.getElementById('tasks-container'),
-  presetContainer: document.getElementById('preset-task-container'),
-  breakContainer: document.getElementById('break-container'),
-  darkModeToggle: document.getElementById('dark-mode-toggle'),
-  // New elements for sleep time
-  sleepTimeInput: document.getElementById('sleep-time-input'),
-  sleepTimeRemaining: document.getElementById('sleep-time-remaining'),
-  // New elements for habit calendar
-  toggleCalendar: document.getElementById('toggle-calendar'),
-  calendarSection: document.getElementById('habit-calendar-section'),
-  calendarMonth: document.getElementById('calendar-month'),
-  calendarDays: document.getElementById('calendar-days'),
-  prevMonth: document.getElementById('prev-month'),
-  nextMonth: document.getElementById('next-month')
-};
-
-const presets = [
-  { text: 'Study', duration: 60 },
-  { text: 'Pray', duration: 30 },
-  { text: 'Meeting', duration: 60 },
-  { text: 'Reading', duration: 45 },
-  { text: 'GYM', duration: 60 }
-];
-
-// Calendar functionality
-let currentDate = new Date();
-let currentMonth = currentDate.getMonth();
-let currentYear = currentDate.getFullYear();
-
-// Toggle calendar visibility
-elems.toggleCalendar.addEventListener('click', () => {
-  const isHidden = elems.calendarSection.classList.contains('hidden');
-  elems.calendarSection.classList.toggle('hidden');
-  elems.toggleCalendar.textContent = isHidden ? 'Hide Calendar' : 'Show Calendar';
-  if (isHidden) {
-    renderCalendar();
-    feather.replace(); // Re-initialize feather icons
-  }
-});
-
-// Month navigation
-elems.prevMonth.addEventListener('click', () => {
-  currentMonth--;
-  if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
-  }
-  renderCalendar();
-});
-
-elems.nextMonth.addEventListener('click', () => {
-  currentMonth++;
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
-  }
-  renderCalendar();
-});
-
-function renderCalendar() {
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                      'July', 'August', 'September', 'October', 'November', 'December'];
-  
-  elems.calendarMonth.textContent = `${monthNames[currentMonth]} ${currentYear}`;
-  elems.calendarDays.innerHTML = '';
-  
-  // Get first day of month and total days
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  
-  // Adjust for Monday as first day (0 = Monday, 6 = Sunday)
-  const startOffset = firstDay === 0 ? 6 : firstDay - 1;
-  
-  // Add empty cells for days before the 1st
-  for (let i = 0; i < startOffset; i++) {
-    const emptyDay = document.createElement('div');
-    emptyDay.className = 'calendar-day';
-    elems.calendarDays.appendChild(emptyDay);
-  }
-  
-  // Add days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayElem = document.createElement('div');
-    dayElem.className = 'calendar-day flex items-center justify-center rounded transition-all duration-300';
-    
-    // Format date string for lookup in dailyProgress
-    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const progress = state.dailyProgress[dateStr] || 0;
-    
-    // Color based on progress
-    if (progress === 0) {
-      dayElem.classList.add('bg-gray-700');
-    } else if (progress < 25) {
-      dayElem.classList.add('bg-red-500');
-    } else if (progress < 50) {
-      dayElem.classList.add('bg-yellow-500');
-    } else if (progress < 75) {
-      dayElem.classList.add('bg-green-500');
-    } else {
-      dayElem.classList.add('bg-blue-500');
-    }
-    
-    // Highlight today
-    const today = new Date();
-    if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
-      dayElem.classList.add('ring-2', 'ring-white');
-    }
-    
-    dayElem.textContent = day;
-    
-    // Add tooltip with exact percentage
-    dayElem.title = progress > 0 ? `${progress.toFixed(0)}% completed` : 'No data';
-    
-    elems.calendarDays.appendChild(dayElem);
-  }
-}
-
-function updateDailyProgress() {
-  // Get today's date string
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  
-  // Calculate percentage for today
-  const pct = Math.min((state.hoursAchieved / 12) * 100, 100);
-  state.dailyProgress[dateStr] = pct;
-  
-  // Save to localStorage
-  localStorage.setItem('dailyProgress', JSON.stringify(state.dailyProgress));
-  
-  // Update calendar if visible
-  if (!elems.calendarSection.classList.contains('hidden')) {
-    renderCalendar();
-  }
-}
-
-function renderPresets() {
-  elems.presetContainer.innerHTML = '';
-  presets.forEach(p => {
-    const btn = document.createElement('button');
-    btn.className = 'p-2 bg-teal-600 text-white rounded';
-    btn.textContent = `${p.text} (${p.duration} min)`;
-    btn.onclick = () => addTask(p.text, p.duration);
-    elems.presetContainer.appendChild(btn);
-  });
-}
-
-function addTask(text, minutes) {
-  const duration = (minutes ?? parseInt(elems.timerSelect.value)) * 60;
-  const taskText = text ?? elems.newTaskInput.value.trim();
-  if (!taskText) return;
-  state.tasks.push({ id: Date.now(), text: taskText, duration, remaining: duration, active: false, completed: false });
-  elems.newTaskInput.value = '';
-  renderTasks();
-  saveTasks(); // Save tasks after adding
-}
-
-function renderTasks() {
-  elems.tasksContainer.innerHTML = '';
-  if (!state.tasks.length) return elems.tasksContainer.innerHTML = '<p class="text-center italic">No tasks yet. Add one above!</p>';
-  state.tasks.forEach(task => {
-    const div = document.createElement('div');
-    div.className = 'flex justify-between items-center bg-gray-700 p-4 rounded-lg';
-    div.innerHTML = `
-      <div>
-        <h3 class="text-lg font-semibold ${task.completed?'line-through':''}">${task.text}</h3>
-        <p class="font-mono text-sm">${formatTime(task.remaining)}</p>
-      </div>
-      <div class="flex gap-2">
-        <button data-action="toggle" data-id="${task.id}" class="px-2 py-1 bg-blue-600 rounded">${task.active?'Pause':'Start'}</button>
-        <button data-action="complete" data-id="${task.id}" class="px-2 py-1 bg-green-600 rounded">Complete</button>
-        <button data-action="delete" data-id="${task.id}" class="px-2 py-1 bg-red-600 rounded">Delete</button>
-      </div>
-    `;
-    elems.tasksContainer.appendChild(div);
-  });
-}
-
-function updatePercentage() {
-  const pct = Math.min((state.hoursAchieved / 12) * 100, 100);
-  elems.percentageAchieved.textContent = `${pct.toFixed(0)}%`;
-  elems.percentageAchieved.className = pct < 25
-    ? 'text-red-500 text-xl font-mono mt-2 transition-all duration-500'
-    : pct < 50
-      ? 'text-yellow-400 text-xl font-mono mt-2 transition-all duration-500'
-      : 'text-green-400 text-xl font-mono mt-2 transition-all duration-500';
-  
-  // Update daily progress when percentage changes
-  updateDailyProgress();
-}
-
-function formatTime(sec) {
-  // Check if sec is a valid number
-  if (isNaN(sec) || sec === undefined) {
-    return "00:00:00";
-  }
-  
-  const h = String(Math.floor(sec/3600)).padStart(2,'0');
-  const m = String(Math.floor((sec%3600)/60)).padStart(2,'0');
-  const s = String(sec%60).padStart(2,'0');
-  return `${h}:${m}:${s}`;
-}
-
-elems.addTaskButton.onclick = () => addTask();
-elems.tasksContainer.onclick = e => {
-  const btn = e.target.closest('button'); if (!btn) return;
-  const { action, id } = btn.dataset;
-  const task = state.tasks.find(t => t.id == id); if (!task) return;
-  if (action === 'toggle') task.active = !task.active;
-  if (action === 'complete' && !task.completed) {
-    task.completed = true; task.active = false;
-    state.hoursAchieved += (task.duration - task.remaining) / 3600;
-    elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-    updatePercentage();
-    saveHoursAchieved();
-  }
-  if (action === 'delete') state.tasks = state.tasks.filter(t => t.id != id);
-  renderTasks();
-  saveTasks(); // Save tasks after any change
-};
-
-elems.breakContainer.onclick = e => { 
-  const btn = e.target.closest('button'); 
-  if (btn && btn.dataset.break) { 
-    // Convert to number explicitly
-    state.breakTimeLeft = parseInt(btn.dataset.break) * 60; 
-    state.breakActive = true; 
-    renderBreak();
-    saveBreakState(); // Save break state when starting a break
-  } 
-};
-
-function renderBreak() {
-  if (state.breakActive) {
-    elems.breakContainer.innerHTML = `<div class="text-center"><p class="text-xl">Break Time:</p><p class="text-3xl font-mono">${formatTime(state.breakTimeLeft)}</p><button id="end-break" class="mt-4 p-2 bg-red-600 rounded">End Break</button></div>`;
-    document.getElementById('end-break').onclick = () => { 
-      state.breakActive = false; 
-      renderBreak(); 
-      saveBreakState(); // Save break state when ending a break
-    };
-  } else {
-    elems.breakContainer.innerHTML = ['5','10','15','20','30'].map(t => `<button data-break="${t}" class="p-2 bg-teal-600 rounded">${t} min</button>`).join('');
-  }
-}
-
-function renderDeadline() {
-  if (!state.deadline) return elems.deadlineRemaining.textContent = 'No deadline set';
-  const now = new Date();
-  let sec = Math.floor((state.deadline - now) / 1000);
-  if (elems.sleepToggle.checked) {
-    const days = Math.floor(sec / 86400);
-    sec -= days * 8 * 3600;
-  }
-  // Change from subtraction to addition for the slept hours
-  if (elems.sleptToggle.checked) sec += 8 * 3600;
-  elems.deadlineRemaining.textContent = sec > 0 ? formatTime(sec) : 'Deadline passed';
-}
-
-elems.deadlineInput.addEventListener('change', () => {
-  state.deadline = elems.deadlineInput.value ? new Date(elems.deadlineInput.value) : null;
-  saveDeadlineSettings(); // Save deadline settings
-});
-elems.sleepToggle.addEventListener('change', () => {
-  renderDeadline();
-  saveDeadlineSettings(); // Save sleep toggle state
-});
-elems.sleptToggle.addEventListener('change', () => {
-  renderDeadline();
-  saveDeadlineSettings(); // Save slept toggle state
-});
-elems.darkModeToggle.onclick = () => {
-  // Toggle dark class on html element
-  const isDark = document.documentElement.classList.toggle('dark');
-  
-  // Update the icon and button styling based on current mode
-  if (isDark) {
-    elems.darkModeToggle.innerHTML = '<i data-feather="sun"></i>';
-    elems.darkModeToggle.className = 'p-2 bg-gray-700 hover:bg-gray-600 text-yellow-300 rounded-full';
-  } else {
-    elems.darkModeToggle.innerHTML = '<i data-feather="moon"></i>';
-    elems.darkModeToggle.className = 'p-2 bg-blue-100 hover:bg-blue-200 text-indigo-700 rounded-full';
-  }
-  
-  // Re-initialize feather icons after changing the icon
-  feather.replace();
-  
-  // Save preference to localStorage
-  localStorage.setItem('darkMode', isDark);
-};
-
-// Load saved progress data
-function loadSavedData() {
-  const savedProgress = localStorage.getItem('dailyProgress');
-  if (savedProgress) {
-    state.dailyProgress = JSON.parse(savedProgress);
-  }
-  
-  const savedHours = localStorage.getItem('hoursAchieved');
-  if (savedHours) {
-    state.hoursAchieved = parseFloat(savedHours);
-    elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-    updatePercentage();
-  }
-  
-  // Load saved tasks
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    state.tasks = JSON.parse(savedTasks);
-    
-    // Check for tasks that were active when browser was closed
-    const now = new Date().getTime();
-    state.tasks.forEach(task => {
-      if (task.active && !task.completed) {
-        // Get the last update time for this task
-        const lastUpdateKey = `task_${task.id}_lastUpdate`;
-        const lastUpdate = localStorage.getItem(lastUpdateKey);
+        // ترتيب الصلوات
+        const prayerOrder = ["fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha"];
         
-        if (lastUpdate) {
-          // Calculate elapsed time in seconds
-          const elapsed = Math.floor((now - parseInt(lastUpdate)) / 1000);
-          
-          // Update the remaining time
-          if (elapsed > 0 && elapsed < task.remaining) {
-            task.remaining -= elapsed;
-          } else if (elapsed >= task.remaining) {
-            // Task completed while browser was closed
-            task.remaining = 0;
-            task.completed = true;
-            task.active = false;
-            state.hoursAchieved += task.duration / 3600;
-            elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-            updatePercentage();
-            saveHoursAchieved();
-          }
+        // مصفوفة لتخزين مواقيت الصلاة
+        let prayerTimes = [];
+        
+        // تحميل مواقيت الصلاة
+        function fetchPrayerTimes() {
+            // تحميل البيانات مباشرة
+            loadPrayerTimes();
+            
+            // إخفاء رسالة التحميل وإظهار المحتوى
+            document.getElementById('loading-message').style.display = 'none';
+            document.getElementById('prayer-content').style.display = 'block';
+            
+            // إعداد قائمة اختيار اليوم وعرض مواقيت الصلاة
+            setupDaySelector();
+            displayPrayerTimes(getCurrentDayIndex());
         }
-      }
-    });
-  }
-  
-  // Load saved deadline
-  const savedDeadline = localStorage.getItem('deadline');
-  if (savedDeadline) {
-    state.deadline = new Date(savedDeadline);
-    elems.deadlineInput.value = state.deadline.toISOString().slice(0, 16);
-  }
-  
-  // Load saved sleep settings
-  const sleepToggle = localStorage.getItem('sleepToggle');
-  if (sleepToggle) {
-    elems.sleepToggle.checked = sleepToggle === 'true';
-  }
-  
-  const sleptToggle = localStorage.getItem('sleptToggle');
-  if (sleptToggle) {
-    elems.sleptToggle.checked = sleptToggle === 'true';
-  }
-  
-  // Load break state
-  const breakStartTime = localStorage.getItem('breakStartTime');
-  const breakDuration = localStorage.getItem('breakDuration');
-  
-  if (breakStartTime && breakDuration) {
-    const now = new Date().getTime();
-    const elapsed = Math.floor((now - parseInt(breakStartTime)) / 1000);
-    const remaining = parseInt(breakDuration) - elapsed;
-    
-    if (remaining > 0) {
-      // Break is still active
-      state.breakActive = true;
-      state.breakTimeLeft = remaining;
-    } else {
-      // Break ended while browser was closed
-      state.breakActive = false;
-      localStorage.removeItem('breakStartTime');
-      localStorage.removeItem('breakDuration');
-    }
-  }
-  
-  // Load dark mode preference
-  const darkMode = localStorage.getItem('darkMode');
-  if (darkMode !== null) {
-    const isDark = darkMode === 'true';
-    document.documentElement.classList.toggle('dark', isDark);
-    
-    // Update the icon and button styling based on loaded preference
-    if (isDark) {
-      elems.darkModeToggle.innerHTML = '<i data-feather="sun"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-gray-700 hover:bg-gray-600 text-yellow-300 rounded-full';
-    } else {
-      elems.darkModeToggle.innerHTML = '<i data-feather="moon"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-blue-100 hover:bg-blue-200 text-indigo-700 rounded-full';
-    }
-    
-    // Re-initialize feather icons
-    if (typeof feather !== 'undefined') {
-      feather.replace();
-    }
-  }
-}
-
-// Load saved progress data
-function loadSavedData() {
-  const savedProgress = localStorage.getItem('dailyProgress');
-  if (savedProgress) {
-    state.dailyProgress = JSON.parse(savedProgress);
-  }
-  
-  const savedHours = localStorage.getItem('hoursAchieved');
-  if (savedHours) {
-    state.hoursAchieved = parseFloat(savedHours);
-    elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-    updatePercentage();
-  }
-  
-  // Load saved tasks
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    state.tasks = JSON.parse(savedTasks);
-  }
-  
-  // Load saved deadline
-  const savedDeadline = localStorage.getItem('deadline');
-  if (savedDeadline) {
-    state.deadline = new Date(savedDeadline);
-    elems.deadlineInput.value = state.deadline.toISOString().slice(0, 16);
-  }
-  
-  // Load saved sleep settings
-  const sleepToggle = localStorage.getItem('sleepToggle');
-  if (sleepToggle) {
-    elems.sleepToggle.checked = sleepToggle === 'true';
-  }
-  
-  const sleptToggle = localStorage.getItem('sleptToggle');
-  if (sleptToggle) {
-    elems.sleptToggle.checked = sleptToggle === 'true';
-  }
-  
-  // Load break state
-  const breakStartTime = localStorage.getItem('breakStartTime');
-  const breakDuration = localStorage.getItem('breakDuration');
-  
-  if (breakStartTime && breakDuration) {
-    const now = new Date().getTime();
-    const elapsed = Math.floor((now - parseInt(breakStartTime)) / 1000);
-    const remaining = parseInt(breakDuration) - elapsed;
-    
-    if (remaining > 0) {
-      // Break is still active
-      state.breakActive = true;
-      state.breakTimeLeft = remaining;
-    } else {
-      // Break ended while browser was closed
-      state.breakActive = false;
-      localStorage.removeItem('breakStartTime');
-      localStorage.removeItem('breakDuration');
-    }
-  }
-  
-  // Load dark mode preference
-  const darkMode = localStorage.getItem('darkMode');
-  if (darkMode !== null) {
-    const isDark = darkMode === 'true';
-    document.documentElement.classList.toggle('dark', isDark);
-    
-    // Update the icon and button styling based on loaded preference
-    if (isDark) {
-      elems.darkModeToggle.innerHTML = '<i data-feather="sun"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-gray-700 hover:bg-gray-600 text-yellow-300 rounded-full';
-    } else {
-      elems.darkModeToggle.innerHTML = '<i data-feather="moon"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-blue-100 hover:bg-blue-200 text-indigo-700 rounded-full';
-    }
-    
-    // Re-initialize feather icons
-    if (typeof feather !== 'undefined') {
-      feather.replace();
-    }
-  }
-}
-
-// Save hours achieved when updated
-function saveHoursAchieved() {
-  localStorage.setItem('hoursAchieved', state.hoursAchieved);
-}
-
-// Save tasks when updated
-function saveTasks() {
-  localStorage.setItem('tasks', JSON.stringify(state.tasks));
-}
-
-// Save break state
-function saveBreakState() {
-  if (state.breakActive) {
-    localStorage.setItem('breakStartTime', new Date().getTime());
-    localStorage.setItem('breakDuration', state.breakTimeLeft);
-  } else {
-    localStorage.removeItem('breakStartTime');
-    localStorage.removeItem('breakDuration');
-  }
-}
-
-// Save deadline and settings
-function saveDeadlineSettings() {
-  if (state.deadline) {
-    localStorage.setItem('deadline', state.deadline.toISOString());
-  } else {
-    localStorage.removeItem('deadline');
-  }
-  localStorage.setItem('sleepToggle', elems.sleepToggle.checked);
-  localStorage.setItem('sleptToggle', elems.sleptToggle.checked);
-  
-  // Save sleep time input value
-  localStorage.setItem('sleepTime', elems.sleepTimeInput.value);
-}
-
-// Add event listener for sleep time input
-elems.sleepTimeInput.addEventListener('change', () => {
-  updateSleepTimeRemaining();
-  saveDeadlineSettings(); // Save sleep time when changed
-});
-
-// Add this function to calculate and display time until sleep
-function updateSleepTimeRemaining() {
-  const now = new Date();
-  const sleepTimeValue = elems.sleepTimeInput.value;
-  
-  if (!sleepTimeValue) {
-    elems.sleepTimeRemaining.textContent = "00:00:00";
-    return;
-  }
-  
-  const [hours, minutes] = sleepTimeValue.split(':').map(Number);
-  const sleepTime = new Date();
-  sleepTime.setHours(hours, minutes, 0, 0);
-  
-  // If sleep time is earlier than current time, set it to tomorrow
-  if (sleepTime < now) {
-    sleepTime.setDate(sleepTime.getDate() + 1);
-  }
-  
-  const remainingSeconds = Math.floor((sleepTime - now) / 1000);
-  elems.sleepTimeRemaining.textContent = formatTime(remainingSeconds);
-}
-
-// Load saved progress data
-function loadSavedData() {
-  const savedProgress = localStorage.getItem('dailyProgress');
-  if (savedProgress) {
-    state.dailyProgress = JSON.parse(savedProgress);
-  }
-  
-  const savedHours = localStorage.getItem('hoursAchieved');
-  if (savedHours) {
-    state.hoursAchieved = parseFloat(savedHours);
-    elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-    updatePercentage();
-  }
-  
-  // Load saved sleep time
-  const savedSleepTime = localStorage.getItem('sleepTime');
-  if (savedSleepTime) {
-    elems.sleepTimeInput.value = savedSleepTime;
-    updateSleepTimeRemaining(); // Update the display immediately
-  }
-  
-  // Load saved tasks
-  const savedTasks = localStorage.getItem('tasks');
-  if (savedTasks) {
-    state.tasks = JSON.parse(savedTasks);
-    
-    // Check for tasks that were active when browser was closed
-    const now = new Date().getTime();
-    state.tasks.forEach(task => {
-      if (task.active && !task.completed) {
-        // Get the last update time for this task
-        const lastUpdateKey = `task_${task.id}_lastUpdate`;
-        const lastUpdate = localStorage.getItem(lastUpdateKey);
         
-        if (lastUpdate) {
-          // Calculate elapsed time in seconds
-          const elapsed = Math.floor((now - parseInt(lastUpdate)) / 1000);
-          
-          // Update the remaining time
-          if (elapsed > 0 && elapsed < task.remaining) {
-            task.remaining -= elapsed;
-          } else if (elapsed >= task.remaining) {
-            // Task completed while browser was closed
-            task.remaining = 0;
-            task.completed = true;
-            task.active = false;
-            state.hoursAchieved += task.duration / 3600;
-            elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-            updatePercentage();
-            saveHoursAchieved();
-          }
+        // تحميل مواقيت الصلاة (مع تقديم ساعة للتوقيت الصيفي)
+        function loadPrayerTimes() {
+            prayerTimes = [
+                { day: 1, fajr: "04:38", sunrise: "06:15", dhuhr: "12:53", asr: "16:28", maghrib: "19:31", isha: "20:58" },
+                { day: 2, fajr: "04:37", sunrise: "06:14", dhuhr: "12:53", asr: "16:28", maghrib: "19:32", isha: "20:59" },
+                { day: 3, fajr: "04:36", sunrise: "06:13", dhuhr: "12:53", asr: "16:28", maghrib: "19:32", isha: "21:00" },
+                { day: 4, fajr: "04:35", sunrise: "06:12", dhuhr: "12:52", asr: "16:28", maghrib: "19:33", isha: "21:01" },
+                { day: 5, fajr: "04:34", sunrise: "06:11", dhuhr: "12:52", asr: "16:28", maghrib: "19:34", isha: "21:02" },
+                { day: 6, fajr: "04:33", sunrise: "06:10", dhuhr: "12:52", asr: "16:28", maghrib: "19:34", isha: "21:03" },
+                { day: 7, fajr: "04:32", sunrise: "06:09", dhuhr: "12:52", asr: "16:28", maghrib: "19:35", isha: "21:04" },
+                { day: 8, fajr: "04:31", sunrise: "06:08", dhuhr: "12:52", asr: "16:28", maghrib: "19:36", isha: "21:05" },
+                { day: 9, fajr: "04:30", sunrise: "06:07", dhuhr: "12:52", asr: "16:28", maghrib: "19:36", isha: "21:06" },
+                { day: 10, fajr: "04:29", sunrise: "06:06", dhuhr: "12:52", asr: "16:28", maghrib: "19:37", isha: "21:07" },
+                { day: 11, fajr: "04:28", sunrise: "06:05", dhuhr: "12:52", asr: "16:28", maghrib: "19:38", isha: "21:08" },
+                { day: 12, fajr: "04:27", sunrise: "06:05", dhuhr: "12:52", asr: "16:28", maghrib: "19:38", isha: "21:09" },
+                { day: 13, fajr: "04:26", sunrise: "06:04", dhuhr: "12:52", asr: "16:28", maghrib: "19:39", isha: "21:10" },
+                { day: 14, fajr: "04:25", sunrise: "06:03", dhuhr: "12:52", asr: "16:28", maghrib: "19:40", isha: "21:11" },
+                { day: 15, fajr: "04:24", sunrise: "06:02", dhuhr: "12:52", asr: "16:28", maghrib: "19:40", isha: "21:12" },
+                { day: 16, fajr: "04:23", sunrise: "06:02", dhuhr: "12:52", asr: "16:28", maghrib: "19:41", isha: "21:13" },
+                { day: 17, fajr: "04:22", sunrise: "06:01", dhuhr: "12:52", asr: "16:28", maghrib: "19:42", isha: "21:14" },
+                { day: 18, fajr: "04:21", sunrise: "06:00", dhuhr: "12:52", asr: "16:28", maghrib: "19:42", isha: "21:15" },
+                { day: 19, fajr: "04:20", sunrise: "06:00", dhuhr: "12:52", asr: "16:28", maghrib: "19:43", isha: "21:16" },
+                { day: 20, fajr: "04:19", sunrise: "05:59", dhuhr: "12:52", asr: "16:28", maghrib: "19:44", isha: "21:17" },
+                { day: 21, fajr: "04:18", sunrise: "05:58", dhuhr: "12:52", asr: "16:28", maghrib: "19:44", isha: "21:18" },
+                { day: 22, fajr: "04:17", sunrise: "05:58", dhuhr: "12:52", asr: "16:28", maghrib: "19:45", isha: "21:19" },
+                { day: 23, fajr: "04:16", sunrise: "05:57", dhuhr: "12:52", asr: "16:28", maghrib: "19:46", isha: "21:20" },
+                { day: 24, fajr: "04:16", sunrise: "05:57", dhuhr: "12:52", asr: "16:28", maghrib: "19:46", isha: "21:20" },
+                { day: 25, fajr: "04:15", sunrise: "05:56", dhuhr: "12:52", asr: "16:29", maghrib: "19:47", isha: "21:21" },
+                { day: 26, fajr: "04:14", sunrise: "05:56", dhuhr: "12:52", asr: "16:29", maghrib: "19:48", isha: "21:22" },
+                { day: 27, fajr: "04:14", sunrise: "05:55", dhuhr: "12:52", asr: "16:29", maghrib: "19:48", isha: "21:23" },
+                { day: 28, fajr: "04:13", sunrise: "05:55", dhuhr: "12:52", asr: "16:29", maghrib: "19:49", isha: "21:24" },
+                { day: 29, fajr: "04:12", sunrise: "05:55", dhuhr: "12:52", asr: "16:29", maghrib: "19:50", isha: "21:25" },
+                { day: 30, fajr: "04:12", sunrise: "05:54", dhuhr: "12:52", asr: "16:29", maghrib: "19:50", isha: "21:25" },
+                { day: 31, fajr: "04:11", sunrise: "05:54", dhuhr: "12:53", asr: "16:29", maghrib: "19:51", isha: "21:26" }
+            ];
         }
-      }
-    });
-  }
-  
-  // Load saved deadline
-  const savedDeadline = localStorage.getItem('deadline');
-  if (savedDeadline) {
-    state.deadline = new Date(savedDeadline);
-    elems.deadlineInput.value = state.deadline.toISOString().slice(0, 16);
-  }
-  
-  // Load saved sleep settings
-  const sleepToggle = localStorage.getItem('sleepToggle');
-  if (sleepToggle) {
-    elems.sleepToggle.checked = sleepToggle === 'true';
-  }
-  
-  const sleptToggle = localStorage.getItem('sleptToggle');
-  if (sleptToggle) {
-    elems.sleptToggle.checked = sleptToggle === 'true';
-  }
-  
-  // Load break state
-  const breakStartTime = localStorage.getItem('breakStartTime');
-  const breakDuration = localStorage.getItem('breakDuration');
-  
-  if (breakStartTime && breakDuration) {
-    const now = new Date().getTime();
-    const elapsed = Math.floor((now - parseInt(breakStartTime)) / 1000);
-    const remaining = parseInt(breakDuration) - elapsed;
-    
-    if (remaining > 0) {
-      // Break is still active
-      state.breakActive = true;
-      state.breakTimeLeft = remaining;
-    } else {
-      // Break ended while browser was closed
-      state.breakActive = false;
-      localStorage.removeItem('breakStartTime');
-      localStorage.removeItem('breakDuration');
-    }
-  }
-  
-  // Load dark mode preference
-  const darkMode = localStorage.getItem('darkMode');
-  if (darkMode !== null) {
-    const isDark = darkMode === 'true';
-    document.documentElement.classList.toggle('dark', isDark);
-    
-    // Update the icon and button styling based on loaded preference
-    if (isDark) {
-      elems.darkModeToggle.innerHTML = '<i data-feather="sun"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-gray-700 hover:bg-gray-600 text-yellow-300 rounded-full';
-    } else {
-      elems.darkModeToggle.innerHTML = '<i data-feather="moon"></i>';
-      elems.darkModeToggle.className = 'p-2 bg-blue-100 hover:bg-blue-200 text-indigo-700 rounded-full';
-    }
-    
-    // Re-initialize feather icons
-    if (typeof feather !== 'undefined') {
-      feather.replace();
-    }
-  }
-}
 
-// Save hours achieved when updated
-function saveHoursAchieved() {
-  localStorage.setItem('hoursAchieved', state.hoursAchieved);
-}
-
-// Save tasks when updated
-function saveTasks() {
-  localStorage.setItem('tasks', JSON.stringify(state.tasks));
-}
-
-// Update the setInterval function to include sleep time remaining
-setInterval(() => {
-  const now = new Date();
-  elems.time.textContent = now.toLocaleTimeString();
-  const end = new Date(); end.setHours(23,59,59);
-  elems.remainingToday.textContent = formatTime(Math.floor((end-now)/1000));
-  
-  // Update sleep time remaining
-  updateSleepTimeRemaining();
-
-  // Task countdown
-  state.tasks.forEach(task => {
-    if (task.active && task.remaining > 0) {
-      // Save the last update time for this task
-      localStorage.setItem(`task_${task.id}_lastUpdate`, now.getTime());
-      
-      task.remaining--;
-      if (task.remaining === 0) {
-        task.completed = true;
-        task.active = false;
-        state.hoursAchieved += task.duration / 3600;
-        elems.hoursAchieved.textContent = state.hoursAchieved.toFixed(2);
-        updatePercentage();
-        saveHoursAchieved();
-        
-        // Play completion sound
-        const completionSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
-        completionSound.volume = 0.7;
-        completionSound.play().catch(e => console.log('Error playing sound:', e));
-        
-        // Show notification
-        if (Notification.permission === 'granted') {
-          const notification = new Notification(`Task "${task.text}" Completed!`, {
-            icon: 'https://cdn-icons-png.flaticon.com/512/1055/1055183.png',
-            body: `You've completed your task: ${task.text}`,
-            silent: true // We're playing our own sound
-          });
-          
-          // Close notification after 5 seconds
-          setTimeout(() => notification.close(), 5000);
+        // تحويل وقت النص إلى كائن Date
+        function getDateFromTimeString(timeString, day) {
+            const [hours, minutes] = timeString.split(':').map(Number);
+            const date = new Date(2025, 4, day); // مايو 2025 (الشهر يبدأ من 0)
+            date.setHours(hours, minutes, 0, 0);
+            return date;
         }
-      }
-    }
-  });
-  renderTasks();
-  saveTasks(); // Save tasks state regularly
 
-  // Break countdown
-  if (state.breakActive && state.breakTimeLeft > 0) {
-    state.breakTimeLeft--;
-    saveBreakState(); // Save break state regularly
-    
-    if (state.breakTimeLeft === 0) {
-      state.breakActive = false;
-      renderBreak(); // This line ensures the UI updates when break ends
-      
-      // Play break end sound
-      const breakEndSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
-      breakEndSound.volume = 0.7;
-      breakEndSound.play().catch(e => console.log('Error playing sound:', e));
-      
-      // Show notification
-      if (Notification.permission === 'granted') {
-        const notification = new Notification("Break Time is Over!", {
-          icon: 'https://cdn-icons-png.flaticon.com/512/3588/3588294.png',
-          body: 'Time to get back to work!',
-          silent: true // We're playing our own sound
-        });
-        
-        // Close notification after 5 seconds
-        setTimeout(() => notification.close(), 5000);
-      }
-    }
-  }
-  renderBreak();
-  renderDeadline();
-}, 1000);
+        // تنسيق الوقت بتنسيق 24 ساعة
+        function formatTime(date) {
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
 
-// Add event listener for page visibility changes
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    // Page is now visible again, reload data
-    loadSavedData();
-    renderTasks();
-    renderBreak();
-    renderDeadline();
-  }
-});
+        // تنسيق العداد التنازلي
+        function formatCountdown(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
 
-// Add a reset hours button to the Hours Achieved section
-function addResetHoursButton() {
-  const resetHoursBtn = document.createElement('button');
-  resetHoursBtn.className = 'mt-2 p-2 bg-yellow-600 text-white rounded text-sm w-full';
-  resetHoursBtn.textContent = 'Reset Hours Achieved';
-  resetHoursBtn.onclick = () => {
-    if (confirm('Are you sure you want to reset your hours achieved? This will not affect your tasks or calendar data.')) {
-      // Reset hours achieved
-      state.hoursAchieved = 0;
-      
-      // Update UI
-      elems.hoursAchieved.textContent = '0.00';
-      updatePercentage();
-      
-      // Save to localStorage
-      localStorage.setItem('hoursAchieved', '0');
-      
-      // Show confirmation
-      alert('Hours achieved has been reset to zero.');
-    }
-  };
-  
-  // Add to the Hours Achieved section
-  const hoursAchievedSection = elems.hoursAchieved.parentElement;
-  hoursAchievedSection.appendChild(resetHoursBtn);
-}
+        // الحصول على الصلاة التالية
+        function getNextPrayer(currentDate, dayData) {
+            const currentTime = currentDate.getTime();
+            
+            for (const prayer of prayerOrder) {
+                const prayerTime = getDateFromTimeString(dayData[prayer], dayData.day).getTime();
+                if (prayerTime > currentTime) {
+                    return {
+                        name: prayer,
+                        time: dayData[prayer],
+                        date: new Date(prayerTime)
+                    };
+                }
+            }
+            
+            // إذا كانت جميع صلوات اليوم قد مرت، فالصلاة التالية هي فجر اليوم التالي
+            if (dayData.day < 31) {
+                const nextDay = prayerTimes.find(d => d.day === dayData.day + 1);
+                return {
+                    name: 'fajr',
+                    time: nextDay.fajr,
+                    date: getDateFromTimeString(nextDay.fajr, nextDay.day)
+                };
+            }
+            
+            // إذا كان آخر يوم في الشهر
+            return {
+                name: 'fajr',
+                time: prayerTimes[0].fajr,
+                date: getDateFromTimeString(prayerTimes[0].fajr, 1)
+            };
+        }
 
-// Initialize
-loadSavedData();
-renderPresets();
-renderTasks();
-renderBreak();
-renderDeadline();
-addResetHoursButton(); // Add the reset hours button
-addClearDataButton(); // Add the clear data button
-addResetTodayButton(); // Add the reset today button
-</script>
+        // تحديث العداد التنازلي
+        function updateCountdown(nextPrayerTime) {
+            const now = new Date();
+            const timeDiff = Math.max(0, Math.floor((nextPrayerTime - now) / 1000));
+            
+            document.getElementById('countdown-timer').textContent = formatCountdown(timeDiff);
+            
+            if (timeDiff <= 0) {
+                // إعادة تحميل الصفحة عندما يصل العداد إلى الصفر
+                setTimeout(() => {
+                    displayPrayerTimes(getCurrentDayIndex());
+                }, 1000);
+            }
+        }
+
+        // الحصول على مؤشر اليوم الحالي
+        function getCurrentDayIndex() {
+            const daySelect = document.getElementById('day-select');
+            return parseInt(daySelect.value) - 1;
+        }
+
+        // عرض بطاقات الصلوات
+        function displayPrayerTimes(dayIndex) {
+            const dayData = prayerTimes[dayIndex];
+            const currentDate = new Date();
+            currentDate.setFullYear(2025, 4, dayData.day); // مايو 2025
+            
+            // تحديث عرض التاريخ
+            document.getElementById('current-date').textContent = `${dayData.day} مايو 2025`;
+            
+            // الحصول على الصلاة التالية
+            const nextPrayer = getNextPrayer(currentDate, dayData);
+            
+            // تحديث معلومات الصلاة التالية
+            document.getElementById('next-prayer-name').textContent = prayerNames[nextPrayer.name];
+            document.getElementById('next-prayer-time').textContent = nextPrayer.time;
+            
+            // بدء العداد التنازلي
+            updateCountdown(nextPrayer.date);
+            const countdownInterval = setInterval(() => {
+                updateCountdown(nextPrayer.date);
+            }, 1000);
+            
+            // تخزين الفاصل الزمني للتنظيف لاحقًا
+            window.currentInterval = countdownInterval;
+            
+            // عرض بطاقات الصلوات
+            const cardsContainer = document.getElementById('prayer-cards-container');
+            cardsContainer.innerHTML = '';
+            
+            // أيقونات لكل صلاة
+            const prayerIcons = {
+                fajr: "fa-sun-rise",
+                sunrise: "fa-sun",
+                dhuhr: "fa-sun",
+                asr: "fa-sun-haze",
+                maghrib: "fa-sunset",
+                isha: "fa-moon"
+            };
+            
+            prayerOrder.forEach(prayer => {
+                const isNext = prayer === nextPrayer.name;
+                if (!isNext) { // لا نعرض بطاقة للصلاة التالية لأنها معروضة بالفعل
+                    const card = document.createElement('div');
+                    card.className = `prayer-card`;
+                    
+                    // اختيار الأيقونة المناسبة أو استخدام أيقونة افتراضية
+                    let iconClass = prayerIcons[prayer] || "fa-clock";
+                    
+                    // استخدام أيقونات بديلة إذا كانت الأيقونات المخصصة غير متوفرة
+                    if (prayer === "fajr") iconClass = "fa-sun";
+                    else if (prayer === "sunrise") iconClass = "fa-sun";
+                    else if (prayer === "dhuhr") iconClass = "fa-sun";
+                    else if (prayer === "asr") iconClass = "fa-sun";
+                    else if (prayer === "maghrib") iconClass = "fa-moon";
+                    else if (prayer === "isha") iconClass = "fa-moon";
+                    
+                    card.innerHTML = `
+                        <div class="prayer-icon">
+                            <i class="fas ${iconClass}"></i>
+                        </div>
+                        <div class="prayer-name">${prayerNames[prayer]}</div>
+                        <div class="prayer-time">${dayData[prayer]}</div>
+                    `;
+                    
+                    cardsContainer.appendChild(card);
+                }
+            });
+        }
+
+        // إعداد قائمة اختيار اليوم
+        function setupDaySelector() {
+            const daySelect = document.getElementById('day-select');
+            daySelect.innerHTML = ''; // مسح أي خيارات موجودة
+            
+            prayerTimes.forEach(day => {
+                const option = document.createElement('option');
+                option.value = day.day;
+                option.textContent = `اليوم ${day.day}`;
+                daySelect.appendChild(option);
+            });
+            
+            // تعيين اليوم الحالي كقيمة افتراضية
+            const today = new Date();
+            const currentDay = Math.min(today.getDate(), 31); // التأكد من أن اليوم ضمن نطاق الشهر
+            daySelect.value = currentDay;
+            
+            // إضافة مستمع الحدث
+            daySelect.addEventListener('change', () => {
+                // تنظيف الفاصل الزمني الحالي
+                if (window.currentInterval) {
+                    clearInterval(window.currentInterval);
+                }
+                
+                displayPrayerTimes(getCurrentDayIndex());
+            });
+        }
+
+        // تنفيذ الدالات عند تحميل الصفحة
+        window.onload = function() {
+            fetchPrayerTimes();
+        };
+    </script>
 </body>
 </html>
